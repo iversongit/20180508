@@ -1,0 +1,121 @@
+{% extends 'base_main.html' %}
+{% load static %}
+{% block extCSS %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'app/market/market.css' %}">
+{% endblock %}
+
+{% block EXTJS %}
+    <script type="text/javascript" src="{% static 'app/market/js/market.js' %}"></script>
+    <script type="text/javascript" src="{% static 'app/common/common.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <div id="market">
+
+        <aside>
+
+            <ul>
+                {% for goods_broad_type in goods_broad_types %}
+                <!--闪购分类展示-->
+                    <li>
+                        <!--链接地址，点击获取分类下的商品信息-->
+                        <a href="{% url "shop:marketparam" goods_broad_type.typeid cid 0 %}">{{ goods_broad_type.typename }}</a>
+                        {% ifequal goods_broad_type.typeid typeid %}
+                            <span class="yellowSlide"></span>
+                        {% endifequal %}
+                    </li>
+                <!--处理数据结束-->
+                {% endfor %}
+
+            </ul>
+
+        </aside>
+
+
+        <section>
+            <nav>
+                <ul>
+                    <li id="all_types"><span>全部类型<span id="all_type_logo"
+                                                       class="glyphicon glyphicon-chevron-down"></span></span></li>
+                    <li id="sort_rule"><span>综合排序<span id="sort_rule_logo" class="glyphicon glyphicon-chevron-down"></span></span></li>
+                </ul>
+            </nav>
+
+            <menu>
+                <ul>
+                    {% for specific_broad_type_good in specific_broad_type_goods %}
+                    <!--商品信息展示-->
+                        <li>
+                            <a href="#">
+                                <img src="{{ specific_broad_type_good.productimg }}" alt="">
+                                <div class="shoppingInfo">
+                                    <h6>{{ specific_broad_type_good.productlongname }}</h6>
+                                    <p class="detailTag">
+                                        <span>精选</span>
+                                        <span>{{ specific_broad_type_good.specifics }}</span>
+                                    </p>
+                                    <p class="unit">
+
+                                    </p>
+                                    <p class="price">
+                                        <span>¥{{ specific_broad_type_good.price }}</span>
+                                        <s>¥{{ specific_broad_type_good.marketprice }}</s>
+                                    </p>
+                                </div>
+                            </a>
+                        <section>
+                            {% csrf_token %}
+                            <button onclick="subShop({{ specific_broad_type_good.id }})">-</button>
+                            <span id="num_{{ specific_broad_type_good.id }}">0</span>
+                            <button onclick="addShop({{ specific_broad_type_good.id }})">+</button>
+                        </section>
+                        </li>
+                    <!--处理数据结束-->
+                    {% endfor %}
+                </ul>
+
+                <div id="all_types_container">
+                    <div>
+                        {% for child_type in finish_divide %}
+                        <!--加载全部分类的数据-->
+                            <a href="{% url "shop:marketparam" typeid child_type.1 0 %}">
+                                <span>{{ child_type.0 }}</span>
+                            </a>
+                        <!--处理数据结束-->
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+
+                <div id="sort_container">
+                    <div>
+{#      排序传递的也是状态码   0 , 1 ,2  , 3 ,4 ,5...                    #}
+                        <a href="{% url "shop:marketparam" typeid cid 0 %}">
+                            <span>综合排序</span>
+                        </a>
+                        <a href="{% url "shop:marketparam" typeid cid 1 %}">
+                            <span>销量排序</span>
+                        </a>
+                        <a href="{% url "shop:marketparam" typeid cid 2 %}">
+                            <span>价格降序</span>
+                        </a>
+                        <a href="{% url "shop:marketparam" typeid cid 3 %}">
+                            <span>价格升序</span>
+                        </a>
+
+                    </div>
+                </div>
+
+            </menu>
+
+        </section>
+
+
+    </div>
+
+
+{% endblock %}
